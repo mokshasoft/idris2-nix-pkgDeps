@@ -16,6 +16,22 @@
         "type": "github"
       }
     },
+    "filepath": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1712288613,
+        "narHash": "sha256-lyKevOBgWhDvHlLkSkjBsMNXPhPr0EEhhAPJuKpCF7A=",
+        "owner": "stefan-hoeck",
+        "repo": "idris2-filepath",
+        "rev": "63dab635a40fd1ee19c07cd789c9099b357d92d1",
+        "type": "github"
+      },
+      "original": {
+        "owner": "stefan-hoeck",
+        "repo": "idris2-filepath",
+        "type": "github"
+      }
+    },
     "flake-utils": {
       "inputs": {
         "systems": "systems"
@@ -104,13 +120,31 @@
         "type": "indirect"
       }
     },
+    "parser-toml": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1719479699,
+        "narHash": "sha256-9sOLSTXK6SuMzjelaR8YNtTJROHouC2Yd8bjmOhGe9g=",
+        "owner": "cuddlefishie",
+        "repo": "toml-idr",
+        "rev": "7e5c4f3cc2ff028f665653b43c4c1f9b0a8211e2",
+        "type": "github"
+      },
+      "original": {
+        "owner": "cuddlefishie",
+        "repo": "toml-idr",
+        "type": "github"
+      }
+    },
     "root": {
       "inputs": {
         "elab-util": "elab-util",
+        "filepath": "filepath",
         "flake-utils": "flake-utils",
         "getopts": "getopts",
         "idris": "idris",
-        "nixpkgs": "nixpkgs"
+        "nixpkgs": "nixpkgs",
+        "parser-toml": "parser-toml"
       }
     },
     "systems": {

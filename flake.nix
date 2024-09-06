@@ -18,9 +18,17 @@
       url = "github:stefan-hoeck/idris2-elab-util";
       flake = false;
     };
+    filepath = {
+      url = "github:stefan-hoeck/idris2-filepath";
+      flake = false;
+    };
+    parser-toml = {
+      url = "github:cuddlefishie/toml-idr";
+      flake = false;
+    };
   };
 
-  outputs = { self, nixpkgs, idris, flake-utils, getopts, elab-util }:
+  outputs = { self, nixpkgs, idris, flake-utils, getopts, elab-util, filepath, parser-toml }:
     flake-utils.lib.eachDefaultSystem (system:
       let
         pkgs = import nixpkgs { inherit system; };
@@ -44,6 +52,14 @@
           elab-util = buildDependency {
             name = "elab-util";
             src = elab-util;
+          };
+          filepath = buildDependency {
+            name = "filepath";
+            src = filepath;
+          };
+          parser-toml = buildDependency {
+            name = "toml";
+            src = parser-toml;
           };
         };
 
