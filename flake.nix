@@ -9,7 +9,7 @@
   };
   # some package this project depends on:
   inputs.pkg = {
-    url = "github:idris-lang/pkg";
+    url = "github:stefan-hoeck/idris2-elab-util";
     inputs.flake-utils.follows = "flake-utils";
     inputs.idris.follows = "idris";
   };
