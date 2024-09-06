@@ -9,7 +9,7 @@
       inputs.flake-utils.follows = "flake-utils";
     };
 
-    # Define dependencies in inputs
+    # Define dependencies here
     getopts = {
       url = "github:idris-community/idris2-getopts";
       flake = false;
@@ -28,47 +28,46 @@
         buildIdris = idris.buildIdris.${system};
         lib = nixpkgs.lib;  # Import lib
 
-        # A function to package dependencies
-        packageDependency = dep:
-          buildIdris {
-            ipkgName = dep.name;
-            src = dep.src;
-            idrisLibraries = [];
-          };
+        # Function to build a dependency package
+        buildDependency = { name, src }: buildIdris {
+          ipkgName = name;
+          src = src;
+          idrisLibraries = [];
+        };
 
-        # Dependencies in a set for mapAttrs
+        # List of dependencies
         dependencies = {
-          getopts = {
+          getopts = buildDependency {
             name = "getopts";
             src = getopts;
           };
-          elab-util = {
+          elab-util = buildDependency {
             name = "elab-util";
             src = elab-util;
           };
         };
 
-        # Iterate over all dependencies and build them
-        builtDeps = lib.attrValues (lib.mapAttrs (name: dep: packageDependency dep) dependencies);
+        # Convert dependencies from set to list
+        builtDeps = lib.attrValues dependencies;
 
-        # Build your package with dependencies
+        # Build the main package with its dependencies
         myPackage = buildIdris {
           ipkgName = "pkgWithDeps";
           src = ./.;
           idrisLibraries = builtDeps;
         };
 
-      in rec {
-        # The default package to be built
+      in {
+        # Default package to be built
         packages.default = myPackage.executable;
 
-        # Configure nix run to execute the binary
+        # Application configuration for running the binary
         apps.default = {
           type = "app";
-          program = "${myPackage.executable}/bin/runMyPkg";
+          program = "${myPackage.executable}/bin/runMyPkg2";
         };
 
-        # Development shell
+        # Development shell configuration
         devShell = pkgs.mkShell {
           buildInputs = [ idrisPkgs.idris2 pkgs.rlwrap ];
           shellHook = ''
