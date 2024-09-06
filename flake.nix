@@ -7,19 +7,30 @@
     inputs.nixpkgs.follows = "nixpkgs";
     inputs.flake-utils.follows = "flake-utils";
   };
+  inputs.pkg = {
+    url = "github:idris-community/idris2-getopts";
+    flake = false; # Indicating that this is not a flake.
+  };
 
-  outputs = { self, nixpkgs, idris, flake-utils }:
+  outputs = { self, nixpkgs, idris, flake-utils, pkg }:
     flake-utils.lib.eachDefaultSystem (system:
       let
         pkgs = import nixpkgs { inherit system; };
         idrisPkgs = idris.packages.${system};
         buildIdris = idris.buildIdris.${system};
 
-        # Build the Idris project using the buildIdris function
+        # Package the idris2-getopts library
+        getoptsLibrary = buildIdris {
+          ipkgName = "getopts";
+          src = "${pkg}";  # Use the source of the idris2-getopts repo
+          idrisLibraries = [ ]; # Assuming getopts doesn't have further dependencies
+        };
+
+        # Build your package with the dependency on idris2-getopts
         myPackage = buildIdris {
           ipkgName = "pkgWithDeps";
           src = ./.;
-          idrisLibraries = [ ];
+          idrisLibraries = [ getoptsLibrary ];
         };
 
       in rec {
@@ -29,7 +40,7 @@
         # Configure nix run to execute the binary
         apps.default = {
           type = "app";
-          program = "${myPackage.executable}/bin/runMyPkg";
+          program = "${myPackage.executable}/bin/runMyPkg2";
         };
 
         # Development shell
