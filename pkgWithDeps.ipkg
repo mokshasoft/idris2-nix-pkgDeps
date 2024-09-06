@@ -1,6 +1,6 @@
 package mypkg2
 
-depends = mypkg
+depends = getopts
 
 modules = Bar
 main = Bar

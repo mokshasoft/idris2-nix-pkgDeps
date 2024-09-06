@@ -7,33 +7,38 @@
     inputs.nixpkgs.follows = "nixpkgs";
     inputs.flake-utils.follows = "flake-utils";
   };
-  # some package this project depends on:
-  inputs.pkg = {
-    url = "github:stefan-hoeck/idris2-elab-util";
-    inputs.flake-utils.follows = "flake-utils";
-    inputs.idris.follows = "idris";
-  };
 
-  outputs = { self, nixpkgs, idris, flake-utils, pkg }:
+  outputs = { self, nixpkgs, idris, flake-utils }:
     flake-utils.lib.eachDefaultSystem (system:
       let
-        npkgs = import nixpkgs { inherit system; };
-        my-pkg = pkg.packages.${system}.library { };
+        pkgs = import nixpkgs { inherit system; };
         idrisPkgs = idris.packages.${system};
         buildIdris = idris.buildIdris.${system};
-        pkgs = buildIdris {
+
+        # Build the Idris project using the buildIdris function
+        myPackage = buildIdris {
           ipkgName = "pkgWithDeps";
           src = ./.;
-          idrisLibraries = [ my-pkg ];
+          idrisLibraries = [ ];
         };
+
       in rec {
-        packages = pkgs // idrisPkgs;
-        defaultPackage = pkgs.executable;
-        devShell = npkgs.mkShell {
-          buildInputs = [ idrisPkgs.idris2 npkgs.rlwrap ];
+        # The default package to be built
+        packages.default = myPackage.executable;
+
+        # Configure nix run to execute the binary
+        apps.default = {
+          type = "app";
+          program = "${myPackage.executable}/bin/runMyPkg";
+        };
+
+        # Development shell
+        devShell = pkgs.mkShell {
+          buildInputs = [ idrisPkgs.idris2 pkgs.rlwrap ];
           shellHook = ''
             alias idris2="rlwrap -s 1000 idris2 --no-banner"
           '';
         };
       });
 }
+
