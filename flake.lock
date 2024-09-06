@@ -34,6 +34,22 @@
         "type": "github"
       }
     },
+    "getopts": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1698479903,
+        "narHash": "sha256-CthWByg4uFic0ktri1AuFqkHtyRzIUrreCTegQgdpVo=",
+        "owner": "idris-community",
+        "repo": "idris2-getopts",
+        "rev": "0d41b98f83f3707deb0ffbc595ef36b7d9cb9eab",
+        "type": "github"
+      },
+      "original": {
+        "owner": "idris-community",
+        "repo": "idris2-getopts",
+        "type": "github"
+      }
+    },
     "idris": {
       "inputs": {
         "flake-utils": [
@@ -88,29 +104,13 @@
         "type": "indirect"
       }
     },
-    "pkg": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1698479903,
-        "narHash": "sha256-CthWByg4uFic0ktri1AuFqkHtyRzIUrreCTegQgdpVo=",
-        "owner": "idris-community",
-        "repo": "idris2-getopts",
-        "rev": "0d41b98f83f3707deb0ffbc595ef36b7d9cb9eab",
-        "type": "github"
-      },
-      "original": {
-        "owner": "idris-community",
-        "repo": "idris2-getopts",
-        "type": "github"
-      }
-    },
     "root": {
       "inputs": {
         "elab-util": "elab-util",
         "flake-utils": "flake-utils",
+        "getopts": "getopts",
         "idris": "idris",
-        "nixpkgs": "nixpkgs",
-        "pkg": "pkg"
+        "nixpkgs": "nixpkgs"
       }
     },
     "systems": {

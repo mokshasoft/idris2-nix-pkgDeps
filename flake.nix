@@ -1,48 +1,61 @@
 {
-  description = "My Idris 2 program";
+  description = "My Idris 2 program with multiple dependencies";
 
-  inputs.flake-utils.url = "github:numtide/flake-utils";
-  inputs.idris = {
-    url = "github:idris-lang/Idris2";
-    inputs.nixpkgs.follows = "nixpkgs";
-    inputs.flake-utils.follows = "flake-utils";
-  };
-  inputs.pkg = {
-    url = "github:idris-community/idris2-getopts";
-    flake = false; # Indicating that this is not a flake.
-  };
-  # Adding the elab-util library as another dependency
-  inputs.elab-util = {
-    url = "github:stefan-hoeck/idris2-elab-util";
-    flake = false; # Assuming it does not have a flake.nix
+  inputs = {
+    flake-utils.url = "github:numtide/flake-utils";
+    idris = {
+      url = "github:idris-lang/Idris2";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.flake-utils.follows = "flake-utils";
+    };
+
+    # Define dependencies in inputs
+    getopts = {
+      url = "github:idris-community/idris2-getopts";
+      flake = false;
+    };
+    elab-util = {
+      url = "github:stefan-hoeck/idris2-elab-util";
+      flake = false;
+    };
   };
 
-  outputs = { self, nixpkgs, idris, flake-utils, pkg, elab-util }:
+  outputs = { self, nixpkgs, idris, flake-utils, getopts, elab-util }:
     flake-utils.lib.eachDefaultSystem (system:
       let
         pkgs = import nixpkgs { inherit system; };
         idrisPkgs = idris.packages.${system};
         buildIdris = idris.buildIdris.${system};
+        lib = nixpkgs.lib;  # Import lib
 
-        # Package the idris2-getopts library
-        getoptsLibrary = buildIdris {
-          ipkgName = "getopts";
-          src = "${pkg}";  # Use the source of the idris2-getopts repo
-          idrisLibraries = [ ]; # Assuming getopts doesn't have further dependencies
+        # A function to package dependencies
+        packageDependency = dep:
+          buildIdris {
+            ipkgName = dep.name;
+            src = dep.src;
+            idrisLibraries = [];
+          };
+
+        # Dependencies in a set for mapAttrs
+        dependencies = {
+          getopts = {
+            name = "getopts";
+            src = getopts;
+          };
+          elab-util = {
+            name = "elab-util";
+            src = elab-util;
+          };
         };
 
-        # Package the elab-util library
-        elabUtilLibrary = buildIdris {
-          ipkgName = "elab-util";
-          src = "${elab-util}";  # Use the source of the elab-util repo
-          idrisLibraries = [ ];  # Assuming elab-util doesn't have further dependencies
-        };
+        # Iterate over all dependencies and build them
+        builtDeps = lib.attrValues (lib.mapAttrs (name: dep: packageDependency dep) dependencies);
 
-        # Build your package with the dependency on both libraries
+        # Build your package with dependencies
         myPackage = buildIdris {
           ipkgName = "pkgWithDeps";
           src = ./.;
-          idrisLibraries = [ getoptsLibrary elabUtilLibrary ];
+          idrisLibraries = builtDeps;
         };
 
       in rec {
@@ -52,7 +65,7 @@
         # Configure nix run to execute the binary
         apps.default = {
           type = "app";
-          program = "${myPackage.executable}/bin/runMyPkg2";
+          program = "${myPackage.executable}/bin/runMyPkg";
         };
 
         # Development shell
