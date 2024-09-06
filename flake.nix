@@ -11,8 +11,13 @@
     url = "github:idris-community/idris2-getopts";
     flake = false; # Indicating that this is not a flake.
   };
+  # Adding the elab-util library as another dependency
+  inputs.elab-util = {
+    url = "github:stefan-hoeck/idris2-elab-util";
+    flake = false; # Assuming it does not have a flake.nix
+  };
 
-  outputs = { self, nixpkgs, idris, flake-utils, pkg }:
+  outputs = { self, nixpkgs, idris, flake-utils, pkg, elab-util }:
     flake-utils.lib.eachDefaultSystem (system:
       let
         pkgs = import nixpkgs { inherit system; };
@@ -26,11 +31,18 @@
           idrisLibraries = [ ]; # Assuming getopts doesn't have further dependencies
         };
 
-        # Build your package with the dependency on idris2-getopts
+        # Package the elab-util library
+        elabUtilLibrary = buildIdris {
+          ipkgName = "elab-util";
+          src = "${elab-util}";  # Use the source of the elab-util repo
+          idrisLibraries = [ ];  # Assuming elab-util doesn't have further dependencies
+        };
+
+        # Build your package with the dependency on both libraries
         myPackage = buildIdris {
           ipkgName = "pkgWithDeps";
           src = ./.;
-          idrisLibraries = [ getoptsLibrary ];
+          idrisLibraries = [ getoptsLibrary elabUtilLibrary ];
         };
 
       in rec {

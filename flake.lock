@@ -1,5 +1,21 @@
 {
   "nodes": {
+    "elab-util": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1712832655,
+        "narHash": "sha256-yHKTtUx91kvdGEwimpbMg+c4rEasfuk+W97yiwTNgcQ=",
+        "owner": "stefan-hoeck",
+        "repo": "idris2-elab-util",
+        "rev": "4ee05e54b80986f05ee5a79e16cb51d4ef6cfb65",
+        "type": "github"
+      },
+      "original": {
+        "owner": "stefan-hoeck",
+        "repo": "idris2-elab-util",
+        "type": "github"
+      }
+    },
     "flake-utils": {
       "inputs": {
         "systems": "systems"
@@ -90,6 +106,7 @@
     },
     "root": {
       "inputs": {
+        "elab-util": "elab-util",
         "flake-utils": "flake-utils",
         "idris": "idris",
         "nixpkgs": "nixpkgs",
