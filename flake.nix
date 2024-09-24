@@ -26,9 +26,13 @@
       url = "github:cuddlefishie/toml-idr";
       flake = false;
     };
+    idris2-lib = {
+      url = "github:idris-lang/Idris2";
+      flake = false;
+    };
   };
 
-  outputs = { self, nixpkgs, idris, flake-utils, getopts, elab-util, filepath, parser-toml }:
+  outputs = { self, nixpkgs, idris, flake-utils, getopts, elab-util, filepath, parser-toml, idris2-lib }:
     flake-utils.lib.eachDefaultSystem (system:
       let
         pkgs = import nixpkgs { inherit system; };
@@ -60,6 +64,10 @@
           parser-toml = buildDependency {
             name = "toml";
             src = parser-toml;
+          };
+          idris2-lib = buildDependency {
+            name = "idris2";
+            src = idris2-lib;
           };
         };
 
